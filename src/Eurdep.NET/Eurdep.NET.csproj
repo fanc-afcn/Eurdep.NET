@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EurdepFieldAttribute.cs" />
     <Compile Include="Format\v2_1\EurdepV21File.cs" />
     <Compile Include="Format\v2_1\Locality.cs" />
     <Compile Include="GeoCoordinate.cs" />
