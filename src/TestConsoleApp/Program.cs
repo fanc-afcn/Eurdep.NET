@@ -20,24 +20,17 @@ namespace TestConsoleApp
                 LocalityName = "Loc1",
                 Coordinates = new GeoCoordinate(50.456, 2.1)
             });
-
-            var member = typeof(Locality);
-            var properties = member.GetProperties().Where(p => Attribute.IsDefined(p, typeof(EurdepFieldAttribute)));
-            IEnumerable<PropertyInfo> mandatoryProperties =
-                properties.Where(
-                    p =>
-                        ((EurdepFieldAttribute) Attribute.GetCustomAttribute(p, typeof (EurdepFieldAttribute)))
-                            .Mandatory);
-
-            //IEnumerable<PropertyInfo> propertiesContainingData = properties.Where(p => p.GetValue(list[0]) != null);
-
-
-            foreach (var prop in properties.OrderBy(p => ((EurdepFieldAttribute)Attribute.GetCustomAttribute(p, typeof(EurdepFieldAttribute))).Order))
+            list.Add(new Locality()
             {
-                var eurdepFieldAttr = (EurdepFieldAttribute) Attribute.GetCustomAttribute(prop, typeof(EurdepFieldAttribute));
-                if(eurdepFieldAttr.Mandatory)
-                    Console.WriteLine(eurdepFieldAttr.FieldName);
-            }
+                LocalityCode = "BE02",
+                LocalityName = "Loc2",
+                Coordinates = new GeoCoordinate(50.456, 2.1),
+                HeightAboveSea = 5
+            });
+
+            var file = new EurdepV21File();
+            file.LocalityList = list;
+            file.BuildFile();
         }
     }
 }
