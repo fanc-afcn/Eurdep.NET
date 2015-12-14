@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Eurdep.NET
 {
+    /// <summary>
+    /// Property used to describe a EURDEP field in a EURDEP sectoin
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class EurdepFieldAttribute : Attribute
     {

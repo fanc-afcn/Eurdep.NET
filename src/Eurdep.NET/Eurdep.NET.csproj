@@ -40,8 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EurdepFieldAttribute.cs" />
-    <Compile Include="Format\v2_1\EurdepV21File.cs" />
+    <Compile Include="Format\v2_1\EurdepFile.cs" />
+    <Compile Include="Format\v2_1\Header.cs" />
     <Compile Include="Format\v2_1\Locality.cs" />
+    <Compile Include="Format\v2_1\_enums.cs" />
     <Compile Include="GeoCoordinate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

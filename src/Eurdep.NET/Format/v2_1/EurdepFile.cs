@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 
 namespace Eurdep.NET.Format.v2_1
 {
-    public class EurdepV21File
+    /// <summary>
+    /// Represents a EURDEP v2.1 file and a the actions that can be performed with it
+    /// </summary>
+    public class EurdepFile
     {
         public IList<Locality> LocalityList { get; set; } 
 
-        public EurdepV21File()
+        public EurdepFile()
         {
             this.LocalityList = new List<Locality>();
         }
@@ -26,13 +29,13 @@ namespace Eurdep.NET.Format.v2_1
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(@"\BEGIN_LOCALITY;");
-            sb.Append(this.BuildList(this.LocalityList));
+            sb.Append(this.BuildItemList(this.LocalityList));
             sb.AppendLine(@"\END_LOCALITY;");
 
             string s = sb.ToString();
         }
 
-        private string BuildList<T>(IList<T> itemList)
+        private string BuildItemList<T>(IList<T> itemList)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(@"\FIELD_LIST ");

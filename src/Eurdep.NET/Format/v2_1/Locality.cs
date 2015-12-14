@@ -1,8 +1,10 @@
 ﻿namespace Eurdep.NET.Format.v2_1
 {
+    /// <summary>
+    /// Represents the EURDEP structure of the "LOCALITY" section
+    /// </summary>
     public class Locality
-    {
-        
+    {        
         [EurdepField("LOCALITY_CODE", true, 1)]
         public string LocalityCode { get; set; }
 
@@ -15,9 +17,16 @@
             get
             {
                 if(this.Coordinates != null)
-                    return Coordinates.LatitudeDecimalDisplay;
+                    return Coordinates.Latitude;
 
                 return null;
+            }
+            set
+            {
+                if(this.Coordinates == null)
+                    this.Coordinates = new GeoCoordinate();
+
+                this.Coordinates.Latitude = value;
             }
         }
 
@@ -27,9 +36,16 @@
             get
             {
                 if (this.Coordinates != null)
-                    return this.Coordinates.LongitudeDecimalDisplay;
+                    return this.Coordinates.Longitude;
 
                 return null;
+            }
+            set
+            {
+                if (this.Coordinates == null)
+                    this.Coordinates = new GeoCoordinate();
+
+                this.Coordinates.Longitude = value;
             }
         }
 
