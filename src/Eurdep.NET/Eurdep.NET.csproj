@@ -40,10 +40,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EurdepFieldAttribute.cs" />
+    <Compile Include="Format\v2_1\Enums\ApparatusType.cs" />
+    <Compile Include="Format\v2_1\Enums\Carrier.cs" />
+    <Compile Include="Format\v2_1\Enums\Constraint.cs" />
     <Compile Include="Format\v2_1\EurdepFile.cs" />
     <Compile Include="Format\v2_1\Header.cs" />
-    <Compile Include="Format\v2_1\Locality.cs" />
-    <Compile Include="Format\v2_1\_enums.cs" />
+    <Compile Include="Format\v2_1\Enums\Importance.cs" />
+    <Compile Include="Format\v2_1\LocalityItem.cs" />
+    <Compile Include="Format\v2_1\Enums\MeasuringUnit.cs" />
+    <Compile Include="Format\v2_1\Enums\Nuclide.cs" />
+    <Compile Include="Format\v2_1\RadiologicalItem.cs" />
+    <Compile Include="Format\v2_1\Enums\SampleTreatment.cs" />
+    <Compile Include="Format\v2_1\Enums\SampleType.cs" />
+    <Compile Include="Format\v2_1\Enums\UncertaintyType.cs" />
+    <Compile Include="Format\v2_1\Enums\ValueType.cs" />
     <Compile Include="GeoCoordinate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

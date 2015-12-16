@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Eurdep.NET;
 using Eurdep.NET.Format.v2_1;
+using Eurdep.NET.Format.v2_1.Enums;
 
 namespace TestConsoleApp
 {
@@ -14,29 +15,57 @@ namespace TestConsoleApp
     {
         static void Main(string[] args)
         {
-            var coord1 = new GeoCoordinate(50.1, 2.35689);
-            var coord2 = new GeoCoordinate(-10.87, -197);
-            var coord3 = new GeoCoordinate("N50.2", "E2.345");
-            var coord4 = new GeoCoordinate("E50.2", "W-180");
+            var header = new Header();
+            var localities = new List<LocalityItem>();
+            var radiologicals = new List<RadiologicalItem>();
 
-            //var list = new List<Locality>();
-            //list.Add(new Locality()
-            //{
-            //    LocalityCode = "BE01",
-            //    LocalityName = "Loc1",
-            //    Coordinates = new GeoCoordinate(50.456, 2.1)
-            //});
-            //list.Add(new Locality()
-            //{
-            //    LocalityCode = "BE02",
-            //    LocalityName = "Loc2",
-            //    Coordinates = new GeoCoordinate(50.456, 2.1),
-            //    HeightAboveSea = 5
-            //});
+            header.Originator = "FANC";
+            header.Carrier = Carrier.FTP;
+            header.Importance = Importance.NORMAL;
+            header.CountryCode = "BE";
+            header.MessageId = Guid.NewGuid().ToString();
+        
+            localities.Add(new LocalityItem()
+            {
+                LocalityCode = "BE01",
+                LocalityName = "Loc1",
+                Coordinates = new GeoCoordinate(50.456, 2.1)
+            });
+            localities.Add(new LocalityItem()
+            {
+                LocalityCode = "BE02",
+                LocalityName = "Loc2",
+                Coordinates = new GeoCoordinate(50.456, 2.1),
+                HeightAboveSea = 5
+            });
 
-            //var file = new EurdepV21File();
-            //file.LocalityList = list;
-            //file.BuildFile();
+            radiologicals.Add(new RadiologicalItem()
+            {
+                LocalityCode = "BE01",
+                BeginDateUTC = new DateTime(2015,1,1,0,0,0, DateTimeKind.Utc),
+                EndDateUTC = new DateTime(2015,1,1,1,0,0, DateTimeKind.Utc),
+                Nuclide = Nuclide.T_GAMMA,
+                SampleType = SampleType.A,
+                Unit = MeasuringUnit.USV_H,
+                Value = 0.55
+            });
+            radiologicals.Add(new RadiologicalItem()
+            {
+                LocalityCode = "BE02",
+                BeginDateUTC = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                EndDateUTC = new DateTime(2015, 1, 1, 1, 0, 0, DateTimeKind.Utc),
+                Nuclide = Nuclide.T_GAMMA,
+                SampleType = SampleType.A,
+                Unit = MeasuringUnit.USV_H,
+                Value = 0.76
+            });
+
+            var file = new EurdepFile();
+            file.Header = header;
+            file.LocalityItemList = localities;
+            file.RadiologicalItemList = radiologicals;
+            var sb = file.BuildFile();
+            var str = sb.ToString();
         }
     }
 }

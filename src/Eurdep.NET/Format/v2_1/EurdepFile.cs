@@ -13,29 +13,104 @@ namespace Eurdep.NET.Format.v2_1
     /// </summary>
     public class EurdepFile
     {
-        public IList<Locality> LocalityList { get; set; } 
+        public Header Header { get; set; }
+        public IList<LocalityItem> LocalityItemList { get; set; }
+        public IList<RadiologicalItem> RadiologicalItemList { get; set; } 
 
         public EurdepFile()
         {
-            this.LocalityList = new List<Locality>();
+            this.LocalityItemList = new List<LocalityItem>();
+            this.RadiologicalItemList = new List<RadiologicalItem>();
         }
 
-        public void BuildFile()
+        public StringBuilder BuildFile()
         {
-            this.BuildLocalitySection();
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine(@"\BEGIN_EURDEP;");
+            sb.AppendLine();
+
+            sb.Append(this.BuildHeaderSection());
+            sb.AppendLine();
+
+            if (this.LocalityItemList.Any())
+            {
+                sb.Append(this.BuildLocalitySection());
+                sb.AppendLine();
+            }
+
+            if (this.RadiologicalItemList.Any())
+            {
+                sb.Append(this.BuildRadiologicalSection());
+                sb.AppendLine();
+            }
+            
+            sb.AppendLine(@"\END_EURDEP;");
+
+            return sb;
         }
 
-        private void BuildLocalitySection()
+        private StringBuilder BuildHeaderSection()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(@"\BEGIN_HEADER;");
+            sb.Append(this.BuildHeaderItems());
+            sb.AppendLine(@"\END_HEADER;");
+
+            return sb;
+        }
+
+        private StringBuilder BuildLocalitySection()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(@"\BEGIN_LOCALITY;");
-            sb.Append(this.BuildItemList(this.LocalityList));
+            sb.Append(this.BuildItemList(this.LocalityItemList));
             sb.AppendLine(@"\END_LOCALITY;");
 
-            string s = sb.ToString();
+            return sb;
         }
 
-        private string BuildItemList<T>(IList<T> itemList)
+        private StringBuilder BuildRadiologicalSection()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(@"\BEGIN_RADIOLOGICAL;");
+            sb.Append(this.BuildItemList(this.RadiologicalItemList));
+            sb.AppendLine(@"\END_RADIOLOGICAL;");
+
+            return sb;
+        }
+
+        private StringBuilder BuildHeaderItems()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (this.Header != null)
+            {
+                var member = typeof(Header);
+                var properties = member.GetProperties().Where(p => Attribute.IsDefined(p, typeof(EurdepFieldAttribute)));
+                List<PropertyInfo> mandatoryProperties =
+                    properties.Where(
+                        p =>
+                            ((EurdepFieldAttribute)Attribute.GetCustomAttribute(p, typeof(EurdepFieldAttribute)))
+                                .Mandatory).ToList();
+
+                List<PropertyInfo> propertiesContainingData = new List<PropertyInfo>();
+                propertiesContainingData.AddRange(properties.Where(p => p.GetValue(this.Header) != null));
+
+                List<PropertyInfo> neededProperties = mandatoryProperties.Union(propertiesContainingData).ToList();
+
+                foreach (var prop in neededProperties.OrderBy(p => ((EurdepFieldAttribute)Attribute.GetCustomAttribute(p, typeof(EurdepFieldAttribute))).Order))
+                {
+                    var eurdepFieldAttr = (EurdepFieldAttribute)Attribute.GetCustomAttribute(prop, typeof(EurdepFieldAttribute));
+                    object value = prop.GetValue(this.Header);
+                    sb.AppendLine(@"\" + eurdepFieldAttr.FieldName + " " + this.FormatObjectForDisplay(value) + ";");
+                }
+            }
+
+            return sb;
+        }
+
+        private StringBuilder BuildItemList<T>(IList<T> itemList)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(@"\FIELD_LIST ");
@@ -72,12 +147,24 @@ namespace Eurdep.NET.Format.v2_1
                 sb.Append(@"\");
                 foreach (var prop in neededProperties.OrderBy(p => ((EurdepFieldAttribute)Attribute.GetCustomAttribute(p, typeof(EurdepFieldAttribute))).Order))
                 {
-                    sb.Append(prop.GetValue(item)).Append(",");
+                    object value = prop.GetValue(item);
+                    sb.Append(this.FormatObjectForDisplay(value)).Append(",");
                 }
                 sb.Length--;
                 sb.AppendLine(";");
             }
-            return sb.ToString();
+            return sb;
+        }
+
+        private string FormatObjectForDisplay(object value)
+        {
+            if (value == null)
+                return null;
+
+            if (value is DateTime)
+                return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+            return value.ToString();
         }
     }
 }

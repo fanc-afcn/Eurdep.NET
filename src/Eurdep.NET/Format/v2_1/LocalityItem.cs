@@ -3,8 +3,10 @@
     /// <summary>
     /// Represents the EURDEP structure of the "LOCALITY" section
     /// </summary>
-    public class Locality
-    {        
+    public class LocalityItem
+    {
+        public GeoCoordinate Coordinates { get; set; }
+
         [EurdepField("LOCALITY_CODE", true, 1)]
         public string LocalityCode { get; set; }
 
@@ -57,7 +59,5 @@
 
         [EurdepField("NUTS", false, 7)]
         public string Nuts { get; set; }
-
-        public GeoCoordinate Coordinates { get; set; }
     }
 }
