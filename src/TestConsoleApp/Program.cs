@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -13,7 +14,7 @@ namespace TestConsoleApp
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var header = new Header();
             var localities = new List<LocalityItem>();
@@ -64,8 +65,13 @@ namespace TestConsoleApp
             file.Header = header;
             file.LocalityItemList = localities;
             file.RadiologicalItemList = radiologicals;
-            var sb = file.BuildFile();
-            var str = sb.ToString();
+            //var sb = file.BuildFile();
+            //var str = sb.ToString();
+
+            using (var fs = new FileStream(@"D:\eurdeptest.txt", FileMode.Create))
+            {
+                await file.WriteToStreamAsync(fs);
+            }
         }
     }
 }
