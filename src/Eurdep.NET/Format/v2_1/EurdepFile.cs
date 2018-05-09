@@ -25,7 +25,7 @@ namespace Eurdep.NET.Format.v2_1
 
         public StringBuilder BuildFile()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine(@"\BEGIN_EURDEP;");
             sb.AppendLine();
@@ -52,7 +52,7 @@ namespace Eurdep.NET.Format.v2_1
 
         private StringBuilder BuildHeaderSection()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine(@"\BEGIN_HEADER;");
             sb.Append(this.BuildHeaderItems());
             sb.AppendLine(@"\END_HEADER;");
@@ -62,7 +62,7 @@ namespace Eurdep.NET.Format.v2_1
 
         private StringBuilder BuildLocalitySection()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine(@"\BEGIN_LOCALITY;");
             sb.Append(this.BuildItemList(this.LocalityItemList));
             sb.AppendLine(@"\END_LOCALITY;");
@@ -72,7 +72,7 @@ namespace Eurdep.NET.Format.v2_1
 
         private StringBuilder BuildRadiologicalSection()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine(@"\BEGIN_RADIOLOGICAL;");
             sb.Append(this.BuildItemList(this.RadiologicalItemList));
             sb.AppendLine(@"\END_RADIOLOGICAL;");
@@ -82,27 +82,27 @@ namespace Eurdep.NET.Format.v2_1
 
         private StringBuilder BuildHeaderItems()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (this.Header != null)
             {
                 var member = typeof(Header);
-                var properties = member.GetProperties().Where(p => Attribute.IsDefined(p, typeof(EurdepFieldAttribute)));
-                List<PropertyInfo> mandatoryProperties =
+                var properties = member.GetProperties().Where(p => Attribute.IsDefined(p, typeof(EurdepFieldAttribute))).ToList();
+                var mandatoryProperties =
                     properties.Where(
                         p =>
                             ((EurdepFieldAttribute)Attribute.GetCustomAttribute(p, typeof(EurdepFieldAttribute)))
                                 .Mandatory).ToList();
 
-                List<PropertyInfo> propertiesContainingData = new List<PropertyInfo>();
+                var propertiesContainingData = new List<PropertyInfo>();
                 propertiesContainingData.AddRange(properties.Where(p => p.GetValue(this.Header) != null));
 
-                List<PropertyInfo> neededProperties = mandatoryProperties.Union(propertiesContainingData).ToList();
+                var neededProperties = mandatoryProperties.Union(propertiesContainingData).ToList();
 
                 foreach (var prop in neededProperties.OrderBy(p => ((EurdepFieldAttribute)Attribute.GetCustomAttribute(p, typeof(EurdepFieldAttribute))).Order))
                 {
                     var eurdepFieldAttr = (EurdepFieldAttribute)Attribute.GetCustomAttribute(prop, typeof(EurdepFieldAttribute));
-                    object value = prop.GetValue(this.Header);
+                    var value = prop.GetValue(this.Header);
                     sb.AppendLine(@"\" + eurdepFieldAttr.FieldName + " " + this.FormatObjectForDisplay(value) + ";");
                 }
             }
@@ -112,18 +112,18 @@ namespace Eurdep.NET.Format.v2_1
 
         private StringBuilder BuildItemList<T>(IList<T> itemList)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append(@"\FIELD_LIST ");
 
             var member = typeof(T);
-            var properties = member.GetProperties().Where(p => Attribute.IsDefined(p, typeof(EurdepFieldAttribute)));
-            List<PropertyInfo> mandatoryProperties =
+            var properties = member.GetProperties().Where(p => Attribute.IsDefined(p, typeof(EurdepFieldAttribute))).ToList();
+            var mandatoryProperties =
                 properties.Where(
                     p =>
                         ((EurdepFieldAttribute)Attribute.GetCustomAttribute(p, typeof(EurdepFieldAttribute)))
                             .Mandatory).ToList();
 
-            List<PropertyInfo> propertiesContainingData = new List<PropertyInfo>();
+            var propertiesContainingData = new List<PropertyInfo>();
 
             foreach (var item in itemList)
             {
@@ -132,7 +132,7 @@ namespace Eurdep.NET.Format.v2_1
 
             propertiesContainingData = propertiesContainingData.Distinct().ToList();
 
-            List<PropertyInfo> neededProperties = mandatoryProperties.Union(propertiesContainingData).ToList();
+            var neededProperties = mandatoryProperties.Union(propertiesContainingData).ToList();
 
             foreach (var prop in neededProperties.OrderBy(p => ((EurdepFieldAttribute)Attribute.GetCustomAttribute(p, typeof(EurdepFieldAttribute))).Order))
             {
@@ -161,10 +161,7 @@ namespace Eurdep.NET.Format.v2_1
             if (value == null)
                 return null;
 
-            if (value is DateTime)
-                return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ");
-
-            return value.ToString();
+            return value is DateTime dt ? dt.ToString("yyyy-MM-ddTHH:mm:ssZ") : value.ToString();
         }
     }
 }
