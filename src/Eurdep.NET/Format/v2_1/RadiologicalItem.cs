@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Eurdep.NET.Format.v2_1.Enums;
+using Eurdep.NET.Format.v2_1.Constants;
 
 namespace Eurdep.NET.Format.v2_1
 {
@@ -64,13 +64,13 @@ namespace Eurdep.NET.Format.v2_1
         }
 
         [EurdepField("NUCLIDE", true, 6)]
-        public Nuclide Nuclide { get; set; }
+        public string Nuclide { get; set; }
 
         [EurdepField("SAMPLE_TYPE", true, 7)]
-        public SampleType SampleType { get; set; }
+        public string SampleType { get; set; }
 
         [EurdepField("UNIT", true, 8)]
-        public MeasuringUnit Unit { get; set; }
+        public string Unit { get; set; }
 
         [EurdepField("VALUE", true, 9)]
         public double Value { get; set; }
@@ -78,25 +78,25 @@ namespace Eurdep.NET.Format.v2_1
         //RECOMMENDED
 
         [EurdepField("APPARATUS", false, 10)]
-        public ApparatusType Apparatus { get; set; }
+        public string Apparatus { get; set; }
 
         [EurdepField("NUTS", false, 11)]
         public string Nuts { get; set; }
 
         [EurdepField("SAMPLE_TREATMENT", false, 12)]
-        public SampleTreatment SampleTreatment { get; set; }
+        public string SampleTreatment { get; set; }
 
         [EurdepField("UNCERTAINTY", false, 13)]
         public double? Uncertainty { get; set; }
 
         [EurdepField("UNCERTAINTY_TYPE", false, 14)]
-        public UncertaintyType UncertaintyType { get; set; }
+        public string UncertaintyType { get; set; }
 
         [EurdepField("UNCERTAINTY_UNIT", false, 15)]
-        public MeasuringUnit UncertaintyUnit { get; set; }
+        public string UncertaintyUnit { get; set; }
 
         [EurdepField("VALUE_CONSTRAINT", false, 16)]
-        public Constraint ValueConstraint { get; set; }
+        public string ValueConstraint { get; set; }
 
         //OPTIONAL
 

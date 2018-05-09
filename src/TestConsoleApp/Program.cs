@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Eurdep.NET;
 using Eurdep.NET.Format.v2_1;
-using Eurdep.NET.Format.v2_1.Enums;
+using Eurdep.NET.Format.v2_1.Constants;
 
 namespace TestConsoleApp
 {
@@ -16,16 +16,31 @@ namespace TestConsoleApp
     {
         static async Task Main(string[] args)
         {
+            await TestRead();
+            //await TestWrite();
+        }
+
+        private static async Task TestRead()
+        {
+            using (var fs = new FileStream(@"D:\Dev\EurdepSampleFiles\NL201712041510-A11.EUR", FileMode.Open))
+            {
+                var eurdepFile = EurdepFile.ReadFromStream(fs);
+            }
+        }
+
+        private static async Task TestWrite()
+        {
             var header = new Header();
             var localities = new List<LocalityItem>();
             var radiologicals = new List<RadiologicalItem>();
 
             header.Originator = "FANC";
-            header.Carrier = Carrier.FTP;
-            header.Importance = Importance.NORMAL;
+            header.Carrier = "FTP";
+            header.Importance = "NORMAL";
             header.CountryCode = "BE";
             header.MessageId = Guid.NewGuid().ToString();
-        
+            header.SentUTC = DateTime.UtcNow;
+
             localities.Add(new LocalityItem()
             {
                 LocalityCode = "BE01",
@@ -40,33 +55,34 @@ namespace TestConsoleApp
                 HeightAboveSea = 5
             });
 
-            radiologicals.Add(new RadiologicalItem()
+            for (int i = 1; i <= 1; i++) //change to test different file sizes
             {
-                LocalityCode = "BE01",
-                BeginDateUTC = new DateTime(2015,1,1,0,0,0, DateTimeKind.Utc),
-                EndDateUTC = new DateTime(2015,1,1,1,0,0, DateTimeKind.Utc),
-                Nuclide = Nuclide.T_GAMMA,
-                SampleType = SampleType.A,
-                Unit = MeasuringUnit.USV_H,
-                Value = 0.55
-            });
-            radiologicals.Add(new RadiologicalItem()
-            {
-                LocalityCode = "BE02",
-                BeginDateUTC = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                EndDateUTC = new DateTime(2015, 1, 1, 1, 0, 0, DateTimeKind.Utc),
-                Nuclide = Nuclide.T_GAMMA,
-                SampleType = SampleType.A,
-                Unit = MeasuringUnit.USV_H,
-                Value = 0.76
-            });
+                radiologicals.Add(new RadiologicalItem()
+                {
+                    LocalityCode = "BE01",
+                    BeginDateUTC = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    EndDateUTC = new DateTime(2015, 1, 1, 1, 0, 0, DateTimeKind.Utc),
+                    Nuclide = Nuclides.T_GAMMA,
+                    SampleType = SampleTypes.A,
+                    Unit = MeasuringUnits.USV_H,
+                    Value = 0.55
+                });
+                radiologicals.Add(new RadiologicalItem()
+                {
+                    LocalityCode = "BE02",
+                    BeginDateUTC = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    EndDateUTC = new DateTime(2015, 1, 1, 1, 0, 0, DateTimeKind.Utc),
+                    Nuclide = Nuclides.T_GAMMA,
+                    SampleType = SampleTypes.A,
+                    Unit = MeasuringUnits.USV_H,
+                    Value = 0.76
+                });
+            }
 
             var file = new EurdepFile();
             file.Header = header;
             file.LocalityItemList = localities;
             file.RadiologicalItemList = radiologicals;
-            //var sb = file.BuildFile();
-            //var str = sb.ToString();
 
             using (var fs = new FileStream(@"D:\eurdeptest.txt", FileMode.Create))
             {
